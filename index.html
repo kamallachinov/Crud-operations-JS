@@ -13,31 +13,36 @@
     <div class="container d-flex justify-content-between align-items-center">
         <h3>Suppliers</h3>
 
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Add new item
-        </button>
+        <input type="text" class="form-control w-50" id="searchInput" placeholder="Search for company name...">
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body grid gap-0 row-gap-3">
-                        <!-- <input type="text" class="form-control" id="id" placeholder="Company Name"> -->
-                        <input type="text" class="form-control" id="companyName" placeholder="Company Name">
-                        <input type="text" class="form-control" id="contactName" placeholder="Contact Name">
-                        <input type="text" class="form-control" id="contactTitle" placeholder="Contact Title">
-                        <input type="text" class="form-control" id="street" placeholder="street">
-                        <input type="text" class="form-control" id="city" placeholder="City">
-                        <input type="text" class="form-control" id="country" placeholder="Country">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="createBtn">Create new</button>
+        <div>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Add new item
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body grid gap-0 row-gap-3">
+                            <!-- <input type="text" class="form-control" id="id" placeholder="Company Name"> -->
+                            <input type="text" class="form-control" id="companyName" placeholder="Company Name">
+                            <input type="text" class="form-control" id="contactName" placeholder="Contact Name">
+                            <input type="text" class="form-control" id="contactTitle" placeholder="Contact Title">
+                            <input type="text" class="form-control" id="street" placeholder="street">
+                            <input type="text" class="form-control" id="city" placeholder="City">
+                            <input type="text" class="form-control" id="country" placeholder="Country">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="createBtn">Create new</button>
+                        </div>
                     </div>
                 </div>
             </div>

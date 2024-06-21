@@ -1,5 +1,4 @@
-let tbody = document.querySelector("tbody")
-// let id = document.getElementById('id');
+let tbody = document.querySelector("tbody");
 let companyName = document.getElementById('companyName');
 let contactName = document.getElementById('contactName');
 let contactTitle = document.getElementById('contactTitle');
@@ -8,88 +7,98 @@ let city = document.getElementById('city');
 let country = document.getElementById('country');
 let createBtn = document.getElementById('createBtn');
 let modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+let searchInput = document.querySelector("#searchInput");
+
+let suppliersData = [];
 
 async function getSuppliers() {
     const response = await fetch("https://northwind.vercel.app/api/suppliers");
-    const suppliers = await response.json();
-    generateTable(suppliers);
+    suppliersData = await response.json();
+    generateTable(suppliersData);
 }
+
+searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase();
+    const filteredSuppliers = suppliersData.filter(supplier =>
+        supplier.companyName.toLowerCase().includes(query)
+    );
+    generateTable(filteredSuppliers);
+});
 
 function generateTableRow(data) {
-    // console.log(data, 'singleSuppleir from generateTableRow function')
-
     let tableRow = document.createElement("tr");
-    tableRow.setAttribute("data-id", data.id)
+    tableRow.setAttribute("data-id", data.id);
 
     let id = document.createElement("td");
-    id.textContent = data.id
+    id.textContent = data.id;
 
     let companyName = document.createElement("td");
-    companyName.textContent = data.companyName
+    companyName.textContent = data.companyName;
 
     let contactName = document.createElement("td");
-    contactName.textContent = data.contactName
+    contactName.textContent = data.contactName;
 
     let contactTitle = document.createElement("td");
-    contactTitle.textContent = data.contactTitle
+    contactTitle.textContent = data.contactTitle;
 
     let street = document.createElement("td");
-    street.textContent = data.address.street
+    street.textContent = data.address.street;
 
     let city = document.createElement("td");
-    city.textContent = data.address.city
+    city.textContent = data.address.city;
 
     let country = document.createElement("td");
-    country.textContent = data.address.country
+    country.textContent = data.address.country;
 
     let actions = document.createElement("td");
-    actions.style.display = "flex"
-    actions.style.gap = "10px"
-    let deleteBtn = document.createElement("button")
+    actions.style.display = "flex";
+    actions.style.gap = "10px";
+    let deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
-    deleteBtn.classList.add("btn")
-    deleteBtn.classList.add("btn-danger")
+    deleteBtn.classList.add("btn", "btn-danger");
 
-    let updateBtn = document.createElement("button")
+    let updateBtn = document.createElement("button");
     updateBtn.textContent = "Update";
-    updateBtn.classList.add("btn")
-    updateBtn.classList.add("btn-warning")
-    updateBtn.classList.add("text-light")
+    updateBtn.classList.add("btn", "btn-warning", "text-light");
 
-    actions.append(deleteBtn, updateBtn)
-    tableRow.append(id, companyName, contactName, contactTitle, street, city, country, actions)
+    actions.append(deleteBtn, updateBtn);
+    tableRow.append(id, companyName, contactName, contactTitle, street, city, country, actions);
+
     deleteBtn.addEventListener("click", () => {
         if (window.confirm("Are you sure delete this item?")) {
-            deleteSupplier(data?.id)
-            deleteBtn.parentElement.parentElement.remove()
+            deleteSupplier(data.id);
+            deleteBtn.parentElement.parentElement.remove();
         }
-    })
-    updateBtn.addEventListener("click", () => {
-        console.log("clicked")
-        window.location.href = `update.html?id=${data.id}`;
-        // updateSupplier(data?.id)
-        fillUpdateForm(data);
-    })
+    });
 
-    return tableRow
+    updateBtn.addEventListener("click", () => {
+        window.location.href = `update.html?id=${data.id}`;
+        fillUpdateForm(data);
+    });
+
+    return tableRow;
 }
 
-
 async function generateTable(suppliers) {
-    suppliers?.map(singleSupplier => {
-        tbody.append(generateTableRow(singleSupplier))
-    })
+    tbody.innerHTML = '';
+    suppliers.map(singleSupplier => {
+        tbody.append(generateTableRow(singleSupplier));
+    });
 }
 
 async function deleteSupplier(id) {
-    fetch(`https://northwind.vercel.app/api/suppliers/${id}`, {
+    await fetch(`https://northwind.vercel.app/api/suppliers/${id}`, {
         method: "DELETE",
-    })
+    });
 }
 
 createBtn.addEventListener("click", () => {
-    postSupplier()
-})
+    if (createBtn.dataset.id) {
+        updateSupplier(createBtn.dataset.id);
+    } else {
+        postSupplier();
+    }
+});
 
 async function postSupplier() {
     let data = {
@@ -101,22 +110,51 @@ async function postSupplier() {
             city: city.value,
             country: country.value
         }
-    }
-    fetch("https://northwind.vercel.app/api/suppliers", {
+    };
+    const res = await fetch("https://northwind.vercel.app/api/suppliers", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-    }).then(res => {
-        if (res.ok) {
-            alert('Supplier added successfully!');
-            getSuppliers();
-            clearForm();
-        } else {
-            alert('Failed to add supplier.');
-        }
-    })
+    });
+
+    if (res.ok) {
+        alert('Supplier added successfully!');
+        getSuppliers();
+        clearForm();
+    } else {
+        alert('Failed to add supplier.');
+    }
 }
 
+async function updateSupplier(id) {
+    let data = {
+        companyName: companyName.value,
+        contactName: contactName.value,
+        contactTitle: contactTitle.value,
+        address: {
+            street: street.value,
+            city: city.value,
+            country: country.value
+        }
+    };
+
+    const res = await fetch(`https://northwind.vercel.app/api/suppliers/${id}`, {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+        alert('Supplier updated successfully!');
+        getSuppliers();
+        clearForm();
+        modal.hide();
+        createBtn.textContent = "Create";
+        delete createBtn.dataset.id;
+    } else {
+        alert('Failed to update supplier.');
+    }
+}
 
 function fillUpdateForm(data) {
     companyName.value = data.companyName;
@@ -126,7 +164,6 @@ function fillUpdateForm(data) {
     city.value = data.address.city;
     country.value = data.address.country;
 
-    modalTitle.textContent = "Update Supplier";
     createBtn.textContent = "Update";
     createBtn.dataset.id = data.id;
     modal.show();
@@ -139,9 +176,9 @@ function clearForm() {
     street.value = '';
     city.value = '';
     country.value = '';
+
+    createBtn.textContent = "Create";
+    delete createBtn.dataset.id;
 }
 
-
-generateTable()
-
-getSuppliers()
+getSuppliers();
